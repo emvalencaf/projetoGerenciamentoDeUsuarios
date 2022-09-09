@@ -73,10 +73,16 @@ export class UserController{
     getValues(){
 
         let user = {}
+        let isValid = true
 
         const elements = [...this.formEl.elements]
 
         elements.forEach( field => {
+
+            if(['name', 'email', 'password'].indexOf(field.name) > -1 && !field.value) {
+                field.parentElement.classList.add("has-error")
+                return isValid = false
+            }
 
             if(field.name === "gender" && field.checked) return user[field.name] = field.value
 
@@ -85,7 +91,9 @@ export class UserController{
             user[field.name] = field.value
     
         })
-    
+        
+        if(!isValid) return
+
         return new UserModel(
             user.name,
             user.gender,
