@@ -1,4 +1,5 @@
 import { UserModel } from "../models/user.model.js"
+import { Utils } from "../utils/utis.dateform.js"
 
 export class UserController{
 
@@ -16,6 +17,10 @@ export class UserController{
         this.formEl.addEventListener("submit", e => {
             
             e.preventDefault()
+
+            const btn = this.formEl.querySelector('[type=submit]')
+
+            btn.disabled = true
             
             let values = this.getValues()
 
@@ -23,6 +28,10 @@ export class UserController{
                 .then(content =>{
                     values.photo = content
                     this.addLine(values)
+
+                    this.formEl.reset()
+
+                    btn.disabled = false
                 })
                 .catch(e => console.log(e))
         })
@@ -101,7 +110,7 @@ export class UserController{
             <td>${dataUser.name}</td>
             <td>${dataUser.email}</td>
             <td>${dataUser.admin? 'Sim':'Não'}</td>
-            <td>${dataUser.birth}</td>
+            <td>${Utils.dateFormat(dataUser.registerAt)}</td>
             <td>
                 <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
                 <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
