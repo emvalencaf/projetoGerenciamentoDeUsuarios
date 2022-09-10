@@ -84,7 +84,7 @@ export class UserController{
     }
 
     getValues(){
-        debugger
+
         let user = {}
         let isValid = true
 
@@ -169,13 +169,13 @@ export class UserController{
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
             let json = JSON.parse(tr.dataset.user)
             let form = document.querySelector("#form-user-update")
-            console.log(json)
-            console.log(form)
+
+
             for(let prop in json){
                 let field = form.querySelector(`[name="${prop}"]`)
-                
+
                 if(!field) break
-                
+
                 switch(field.type){
                     case 'file':
                         continue
@@ -183,6 +183,7 @@ export class UserController{
                     case 'radio':
                         field = document.querySelector(`[name="${prop}"][value="${json[prop]}"]`)
                         field.checked = true
+                        console.log(field)
                         break
                     case 'checkbox':
                         field.checked = json[prop]
@@ -190,7 +191,6 @@ export class UserController{
                     default:
                         field.value = json[prop]
                 }
-                console.log(field)
             }
             console.log(form)
             this.showPanelUpdate()
