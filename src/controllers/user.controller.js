@@ -154,6 +154,21 @@ export class UserController{
         `
 
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
+            let json = JSON.parse(tr.dataset.user)
+            let form = document.querySelector("#form-user-update")
+            console.log(json)
+            console.log(form)
+            for(let prop in json){
+                const field = form.querySelector(`[name="${prop}"]`)
+                
+                if(!field) break
+                
+                if(field.type === "file") continue
+                
+                field.value = json[prop]
+                console.log(field)
+            }
+            console.log(form)
             this.showPanelUpdate()
         })
 
