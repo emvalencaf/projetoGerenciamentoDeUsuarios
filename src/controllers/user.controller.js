@@ -84,11 +84,13 @@ export class UserController{
     }
 
     getValues(){
-
+        debugger
         let user = {}
         let isValid = true
 
         const elements = [...this.formEl.elements]
+
+        console.log(elements)
 
         elements.forEach( field => {
 
@@ -96,12 +98,22 @@ export class UserController{
                 field.parentElement.classList.add("has-error")
                 return isValid = false
             }
-
-            if(field.name === "gender" && field.checked) return user[field.name] = field.value
-
-            if(field.name === "admin") return user[field.name] = field.checked
+            
+            if (field.name === "gender") {
     
-            user[field.name] = field.value
+                if (field.checked) {
+                    user[field.name] = field.value
+                }
+    
+            } else if(field.name == "admin") {
+
+                user[field.name] = field.checked;
+
+            } else {
+    
+                user[field.name] = field.value
+    
+            }
     
         })
         
@@ -130,6 +142,7 @@ export class UserController{
             name: dataUser.name,
             gender: dataUser.gender,
             birth: dataUser.birth,
+            country: dataUser.country,
             email: dataUser.email,
             password: dataUser.password,
             photo: dataUser.photo,
@@ -159,13 +172,24 @@ export class UserController{
             console.log(json)
             console.log(form)
             for(let prop in json){
-                const field = form.querySelector(`[name="${prop}"]`)
+                let field = form.querySelector(`[name="${prop}"]`)
                 
                 if(!field) break
                 
-                if(field.type === "file") continue
-                
-                field.value = json[prop]
+                switch(field.type){
+                    case 'file':
+                        continue
+                        break
+                    case 'radio':
+                        field = document.querySelector(`[name="${prop}"][value="${json[prop]}"]`)
+                        field.checked = true
+                        break
+                    case 'checkbox':
+                        field.checked = json[prop]
+                        break
+                    default:
+                        field.value = json[prop]
+                }
                 console.log(field)
             }
             console.log(form)
