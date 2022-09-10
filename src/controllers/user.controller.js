@@ -9,9 +9,18 @@ export class UserController{
         this.tableEl = document.getElementById(tableId)
 
         this.onSubmit()
+        this.onEdit()
 
     }
     
+    onEdit(){
+
+        document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e =>{
+            this.showPanelCreate()
+        })
+
+    }
+
     onSubmit(){
         
         this.formEl.addEventListener("submit", e => {
@@ -116,10 +125,14 @@ export class UserController{
         console.log(dataUser)
 
         const tr = document.createElement('tr')
-        
+
         tr.dataset.user = JSON.stringify({
             name: dataUser.name,
+            gender: dataUser.gender,
+            birth: dataUser.birth,
             email: dataUser.email,
+            password: dataUser.password,
+            photo: dataUser.photo,
             admin: dataUser.admin,
             registerAt: dataUser.registerAt
         })
@@ -135,14 +148,28 @@ export class UserController{
         <td>${dataUser.admin? 'Sim':'Não'}</td>
         <td>${Utils.dateFormat(dataUser.registerAt)}</td>
         <td>
-        <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+        <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
         <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
         </td>
         `
 
+        tr.querySelector(".btn-edit").addEventListener("click", e =>{
+            this.showPanelUpdate()
+        })
+
         this.tableEl.appendChild(tr)
         
         this.updateCount()
+    }
+
+    showPanelCreate(){
+        document.querySelector("#box-user-create").style.display = "block"
+        document.querySelector("#box-user-update").style.display = "none"
+    }
+
+    showPanelUpdate(){
+        document.querySelector("#box-user-create").style.display = "none"
+        document.querySelector("#box-user-update").style.display = "block"
     }
 
     updateCount(){
