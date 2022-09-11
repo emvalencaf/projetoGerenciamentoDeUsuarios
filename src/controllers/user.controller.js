@@ -60,23 +60,11 @@ export class UserController{
                     result.photo = content
                 }
 
-                tr.dataset.user = this.userModelStrinfigy(result)
+                let user = new UserModel()
 
-                tr.innerHTML = `
-                <td>
-                <img src="${result.photo}" alt="User Image" class="img-circle img-sm">
-                </td>
-                <td>${result.name}</td>
-                <td>${result.email}</td>
-                <td>${result.admin? 'Sim':'Não'}</td>
-                <td>${Utils.dateFormat(result.registerAt)}</td>
-                <td>
-                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
-                </td>
-                `
+                user.loadFromJSON()
 
-                this.addEventsTr(tr)
+                tr = this.getTr(user, tr)
 
                 this.updateCount()
 
@@ -244,29 +232,36 @@ export class UserController{
 
     }
 
-    addLine(dataUser){
+    getTr(dataUser, tr = null){
 
-        console.log(dataUser)
+        if(!tr) tr = document.createElement('tr')
 
-        const tr = document.createElement('tr')
+        console.log(tr)
 
         tr.dataset.user = this.userModelStrinfigy(dataUser)
 
         tr.innerHTML = `
         <td>
-        <img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm">
+            <img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm">
         </td>
         <td>${dataUser.name}</td>
         <td>${dataUser.email}</td>
         <td>${dataUser.admin? 'Sim':'Não'}</td>
         <td>${Utils.dateFormat(dataUser.registerAt)}</td>
         <td>
-        <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-        <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
+            <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
+            <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
         </td>
         `
 
-        this.addEventsTr(tr)
+        this.addEventsTr(tr) 
+
+        return tr
+    }
+
+    addLine(dataUser){
+
+        const tr = this.getTr(dataUser)
 
         this.tableEl.appendChild(tr)
         
