@@ -11,7 +11,7 @@ export class UserController{
 
         this.onSubmit()
         this.onEdit()
-
+        this.selectAll()
     }
     
     onEdit(){
@@ -28,8 +28,6 @@ export class UserController{
             btn.disabled = true
 
             let values = this.getValues(this.formUpdateEl)
-
-            console.log(values)
             
             values = JSON.parse(this.userModelStrinfigy(values))
 
@@ -63,8 +61,6 @@ export class UserController{
                 }
 
                 tr.dataset.user = this.userModelStrinfigy(result)
-
-                console.log(result.registerAt instanceof Date)
 
                 tr.innerHTML = `
                 <td>
@@ -114,14 +110,16 @@ export class UserController{
             btn.disabled = true
             
             let values = this.getValues(this.formEl)
-
-            console.log(values)
             
             if(!values) return
 
             this.getPhoto(this.formEl)
                 .then(content =>{
+                    
                     values.photo = content
+
+                    this.insert(values)
+
                     this.addLine(values)
 
                     this.formEl.reset()
@@ -142,8 +140,6 @@ export class UserController{
             let elements = [...formEl.elements].filter( element => element.name === "photo")
     
             const file = elements[0].files[0]
-
-            console.log(file)
 
             fileReader.onload = () => {
 
@@ -171,8 +167,6 @@ export class UserController{
         let isValid = true
 
         const elements = [...formEl.elements]
-
-        console.log(elements)
 
         elements.forEach( field => {
 
@@ -213,7 +207,43 @@ export class UserController{
         )
     }
 
-    
+    getUsersStorage(){
+
+        const localItem = localStorage.getItem("users")
+
+        if(!localItem) return []
+        
+        return JSON.parse(localItem)
+    }
+
+    selectAll(){
+
+        let users = this.getUsersStorage()
+
+        if(users.length === 0) return
+
+        users.forEach(dataUser => {
+            
+            let user = new UserModel()
+
+            user.loadFromJSON(dataUser)
+
+            this.addLine(user)
+
+        })
+    }
+
+    insert(data){
+
+        let users = this.getUsersStorage()
+
+        users.push(data)
+
+
+        localStorage.setItem("users", this.userModelStrinfigy(users))
+
+    }
+
     addLine(dataUser){
 
         console.log(dataUser)
@@ -221,8 +251,6 @@ export class UserController{
         const tr = document.createElement('tr')
 
         tr.dataset.user = this.userModelStrinfigy(dataUser)
-
-        console.log(tr.dataset.user)
 
         tr.innerHTML = `
         <td>
@@ -246,6 +274,38 @@ export class UserController{
     }
 
     userModelStrinfigy(dataUser){
+/*
+        if(dataUser instanceof Array) {
+            console.log('array')
+            return dataUser.map(user => JSON.stringify({
+            name: user.name,
+            gender: user.gender,
+            birth: user.birth,
+            country: user.country,
+            email: user.email,
+            password: user.password,
+            photo: user.photo,
+            admin: user.admin,
+            registerAt: user.registerAt
+        }))}*/
+        if(dataUser instanceof Array){
+            let newArr = []
+
+            dataUser.forEach(user=> newArr.push({
+                name: user.name,
+                gender: user.gender,
+                birth: user.birth,
+                country: user.country,
+                email: user.email,
+                password: user.password,
+                photo: user.photo,
+                admin: user.admin,
+                registerAt: user.registerAt
+            }))
+
+            return JSON.stringify(newArr)
+        }
+
         return JSON.stringify({
             name: dataUser.name,
             gender: dataUser.gender,
@@ -325,7 +385,6 @@ export class UserController{
             numberUsers ++
 
             const user = JSON.parse(tr.dataset.user)
-            console.log(user)
 
             if(user.admin) numberAdmins++
 

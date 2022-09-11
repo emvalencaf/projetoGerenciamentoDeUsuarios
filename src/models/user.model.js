@@ -27,24 +27,48 @@ export class UserModel{
         return this.#_name
     }
 
+    set name(value){
+        return this.#_name = value
+    }
+
     get gender(){
         return this.#_gender
+    }
+    
+    set gender(value){
+        return this.#_gender = value
     }
 
     get birth(){
         return this.#_birth
     }
 
+    set birth(value){
+        return this.#_birth = value
+    }
+
     get country(){
         return this.#_country
+    }
+
+    set country(value){
+        return this.#_country = value
     }
 
     get email(){
         return this.#_email
     }
 
+    set email(value){
+        return this.#_email = value
+    }
+
     get password(){
         return this.#_password
+    }
+
+    set password(value){
+        return this.#_password = value
     }
 
     get photo(){
@@ -59,7 +83,29 @@ export class UserModel{
         return this.#_admin
     }
 
+    set admin(value){
+        return this.#_admin = value
+    }
+
     get registerAt(){
         return this.#_registerAt
+    }
+
+    set registerAt(value){
+
+        if(value instanceof Date) return this.#_registerAt = value
+
+        return this.#_registerAt = new Date(value)
+    }
+
+    loadFromJSON(json){
+
+        for(let name in json){
+
+            this[name] = json[name]
+
+        }
+
+        console.log(this)
     }
 }
