@@ -55,7 +55,6 @@ export class UserController{
 
             this.getPhoto(this.formUpdateEl)
             .then(content =>{
-                debugger
                 
                 if(!values.photo) {
                     result.photo = userOld.photo
@@ -235,7 +234,7 @@ export class UserController{
         <td>${Utils.dateFormat(dataUser.registerAt)}</td>
         <td>
         <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-        <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+        <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
         </td>
         `
 
@@ -261,6 +260,17 @@ export class UserController{
     }
 
     addEventsTr(tr){
+
+        tr.querySelector(".btn-delete").addEventListener("click", e =>{
+
+            if(!confirm("Deseja realmente excluir?")) return
+
+            tr.remove()
+
+            this.updateCount()
+
+        })
+
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
             let json = JSON.parse(tr.dataset.user)
 
