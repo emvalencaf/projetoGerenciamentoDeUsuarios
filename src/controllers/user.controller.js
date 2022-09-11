@@ -3,9 +3,10 @@ import { Utils } from "../utils/utis.dateform.js"
 
 export class UserController{
 
-    constructor(formId, tableId){
+    constructor(formId, formIdUpdate, tableId){
 
         this.formEl = document.getElementById(formId)
+        this.formUpdateEl = document.getElementById(formIdUpdate)
         this.tableEl = document.getElementById(tableId)
 
         this.onSubmit()
@@ -16,6 +17,77 @@ export class UserController{
     onEdit(){
 
         document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e =>{
+            this.showPanelCreate()
+        })
+
+        this.formUpdateEl.addEventListener("submit", evt =>{
+            evt.preventDefault()
+
+            let btn = this.formUpdateEl.querySelector("[type='submit'")
+
+            btn.disabled = true
+
+            let values = this.getValues(this.formUpdateEl)
+
+            console.log(values)
+            
+            values = JSON.parse(this.userModelStrinfigy(values))
+
+            let index = this.formUpdateEl.dataset.trIndex
+
+            let tr = this.tableEl.rows[index]
+
+            let userOld = JSON.parse(tr.dataset.user)
+
+            let result = Object.assign({}, userOld, values)
+            
+            
+            this.getPhoto(this.formUpdateEl)
+            .then(content =>{
+                debugger
+                
+                if(!values.photo) {
+                    result.photo = userOld.photo
+                } else {
+                    result.photo = content
+                }
+
+                tr.dataset.user = this.userModelStrinfigy(result)
+
+                console.log(result)
+
+                tr.innerHTML = `
+                <td>
+                <img src="${result.photo}" alt="User Image" class="img-circle img-sm">
+                </td>
+                <td>${result.name}</td>
+                <td>${result.email}</td>
+                <td>${result.admin? 'Sim':'Não'}</td>
+                <td>${Utils.dateFormat(result.registerAt)}</td>
+                <td>
+                <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
+                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                </td>
+                `
+
+                this.addEventsTr(tr)
+
+                this.updateCount()
+
+                this.formUpdateEl.reset()
+
+                this.showPanelCreate()
+
+                btn.disabled = false
+            })
+            .catch(e => console.log(e))
+
+
+            
+            this.updateCount()
+
+            btn.disabled = false
+
             this.showPanelCreate()
         })
 
@@ -31,13 +103,13 @@ export class UserController{
 
             btn.disabled = true
             
-            let values = this.getValues()
+            let values = this.getValues(this.formEl)
 
             console.log(values)
             
             if(!values) return
 
-            this.getPhoto()
+            this.getPhoto(this.formEl)
                 .then(content =>{
                     values.photo = content
                     this.addLine(values)
@@ -51,13 +123,13 @@ export class UserController{
         
     }
 
-    getPhoto(){
+    getPhoto(formEl){
 
         return new Promise( (resolve, reject) => {
 
             let fileReader = new FileReader()
     
-            let elements = [...this.formEl.elements].filter( element => element.name === "photo")
+            let elements = [...formEl.elements].filter( element => element.name === "photo")
     
             const file = elements[0].files[0]
 
@@ -83,12 +155,12 @@ export class UserController{
         })
     }
 
-    getValues(){
+    getValues(formEl){
 
         let user = {}
         let isValid = true
 
-        const elements = [...this.formEl.elements]
+        const elements = [...formEl.elements]
 
         console.log(elements)
 
@@ -138,17 +210,7 @@ export class UserController{
 
         const tr = document.createElement('tr')
 
-        tr.dataset.user = JSON.stringify({
-            name: dataUser.name,
-            gender: dataUser.gender,
-            birth: dataUser.birth,
-            country: dataUser.country,
-            email: dataUser.email,
-            password: dataUser.password,
-            photo: dataUser.photo,
-            admin: dataUser.admin,
-            registerAt: dataUser.registerAt
-        })
+        tr.dataset.user = this.userModelStrinfigy(dataUser)
 
         console.log(tr.dataset.user)
 
@@ -166,13 +228,36 @@ export class UserController{
         </td>
         `
 
+        this.addEventsTr(tr)
+
+        this.tableEl.appendChild(tr)
+        
+        this.updateCount()
+    }
+
+    userModelStrinfigy(dataUser){
+        return JSON.stringify({
+            name: dataUser.name,
+            gender: dataUser.gender,
+            birth: dataUser.birth,
+            country: dataUser.country,
+            email: dataUser.email,
+            password: dataUser.password,
+            photo: dataUser.photo,
+            admin: dataUser.admin,
+            registerAt: dataUser.registerAt
+        })
+    }
+
+    addEventsTr(tr){
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
             let json = JSON.parse(tr.dataset.user)
-            let form = document.querySelector("#form-user-update")
 
 
             for(let prop in json){
-                let field = form.querySelector(`[name="${prop}"]`)
+                let field = this.formUpdateEl.querySelector(`[name="${prop}"]`)
+
+                this.formUpdateEl.dataset.trIndex = tr.sectionRowIndex
 
                 if(!field) break
 
@@ -192,13 +277,11 @@ export class UserController{
                         field.value = json[prop]
                 }
             }
-            console.log(form)
+
+            this.formUpdateEl.querySelector(".photo").src = json.photo
+
             this.showPanelUpdate()
         })
-
-        this.tableEl.appendChild(tr)
-        
-        this.updateCount()
     }
 
     showPanelCreate(){

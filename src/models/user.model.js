@@ -9,7 +9,7 @@ export class UserModel{
     #_admin
     #_registerAt
 
-    constructor(name, gender, birth, country, email, password, photo, admin){
+    constructor(name, gender, birth, country, email, password, photo, admin, registerAt){
 
         this.#_name = name
         this.#_gender = gender
@@ -19,7 +19,8 @@ export class UserModel{
         this.#_password = password
         this.#_photo = photo
         this.#_admin = admin
-        this.#_registerAt = new Date()
+
+        !registerAt? this.#_registerAt = new Date() : this.#_registerAt = Date.parse(registerAt)
     }
 
     get name(){
