@@ -20,7 +20,7 @@ export class UserModel{
         this.#_photo = photo
         this.#_admin = admin
 
-        !registerAt? this.#_registerAt = new Date() : this.#_registerAt = Date.parse(registerAt)
+        !registerAt? this.#_registerAt = new Date() : this.#_registerAt = new Date(registerAt)
     }
 
     get name(){

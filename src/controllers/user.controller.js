@@ -41,7 +41,18 @@ export class UserController{
 
             let result = Object.assign({}, userOld, values)
             
-            
+            const {name, gender, birth, country, email, password, photo, admin, registerAt} = result
+
+            result = new UserModel(name,
+                gender,
+                birth,
+                country,
+                email,
+                password,
+                photo,
+                admin,
+                registerAt)
+
             this.getPhoto(this.formUpdateEl)
             .then(content =>{
                 debugger
@@ -54,7 +65,7 @@ export class UserController{
 
                 tr.dataset.user = this.userModelStrinfigy(result)
 
-                console.log(result)
+                console.log(result.registerAt instanceof Date)
 
                 tr.innerHTML = `
                 <td>
