@@ -29,7 +29,7 @@ export class UserController{
 
             let values = this.getValues(this.formUpdateEl)
             
-            values = JSON.parse(this.userModelStrinfigy(values))
+            values = JSON.parse(UserModel.userStringify(values))
 
             let index = this.formUpdateEl.dataset.trIndex
 
@@ -63,6 +63,8 @@ export class UserController{
                 let user = new UserModel()
 
                 user.loadFromJSON()
+
+                user.save()
 
                 tr = this.getTr(user, tr)
 
@@ -106,7 +108,7 @@ export class UserController{
                     
                     values.photo = content
 
-                    this.insert(values)
+                    values.save()
 
                     this.addLine(values)
 
@@ -195,18 +197,9 @@ export class UserController{
         )
     }
 
-    getUsersStorage(){
-
-        const localItem = localStorage.getItem("users")
-
-        if(!localItem) return []
-        
-        return JSON.parse(localItem)
-    }
-
     selectAll(){
 
-        let users = this.getUsersStorage()
+        let users = UserModel.getUsersStorage()
 
         if(users.length === 0) return
 
@@ -221,24 +214,13 @@ export class UserController{
         })
     }
 
-    insert(data){
-
-        let users = this.getUsersStorage()
-
-        users.push(data)
-
-
-        localStorage.setItem("users", this.userModelStrinfigy(users))
-
-    }
-
     getTr(dataUser, tr = null){
 
         if(!tr) tr = document.createElement('tr')
 
         console.log(tr)
 
-        tr.dataset.user = this.userModelStrinfigy(dataUser)
+        tr.dataset.user = UserModel.userStringify(dataUser)
 
         tr.innerHTML = `
         <td>
@@ -268,58 +250,18 @@ export class UserController{
         this.updateCount()
     }
 
-    userModelStrinfigy(dataUser){
-/*
-        if(dataUser instanceof Array) {
-            console.log('array')
-            return dataUser.map(user => JSON.stringify({
-            name: user.name,
-            gender: user.gender,
-            birth: user.birth,
-            country: user.country,
-            email: user.email,
-            password: user.password,
-            photo: user.photo,
-            admin: user.admin,
-            registerAt: user.registerAt
-        }))}*/
-        if(dataUser instanceof Array){
-            let newArr = []
-
-            dataUser.forEach(user=> newArr.push({
-                name: user.name,
-                gender: user.gender,
-                birth: user.birth,
-                country: user.country,
-                email: user.email,
-                password: user.password,
-                photo: user.photo,
-                admin: user.admin,
-                registerAt: user.registerAt
-            }))
-
-            return JSON.stringify(newArr)
-        }
-
-        return JSON.stringify({
-            name: dataUser.name,
-            gender: dataUser.gender,
-            birth: dataUser.birth,
-            country: dataUser.country,
-            email: dataUser.email,
-            password: dataUser.password,
-            photo: dataUser.photo,
-            admin: dataUser.admin,
-            registerAt: dataUser.registerAt
-        })
-    }
-
     addEventsTr(tr){
 
         tr.querySelector(".btn-delete").addEventListener("click", e =>{
 
             if(!confirm("Deseja realmente excluir?")) return
 
+            let user = new UserModel()
+
+            user.loadFromJSON(JSON.parse(tr.dataset.user))
+
+            user.remove()
+        
             tr.remove()
 
             this.updateCount()
