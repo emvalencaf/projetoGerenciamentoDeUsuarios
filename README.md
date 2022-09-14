@@ -31,3 +31,6 @@ Para a integração entre o front-end e o back-end foi criado dois servidores:
 
 A construção do client-server foi desenvolvido usando o pacote express-generator.
 
+### Como usar
+
+Para usar é preciso rodar tanto o servidor da API quanto o servidor do front-end baixando os pacotes em dependências (usando o comando npm install) e em seguida rodar o servidor usando o comando npm start no terminal dos repositórios da API e do front-end
