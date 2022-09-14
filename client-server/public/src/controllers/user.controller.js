@@ -31,7 +31,7 @@ export class UserController{
 
             let values = this.getValues(this.formUpdateEl)
             
-            values = JSON.parse(UserModel.userStringify(values))
+            values = JSON.parse(JSON.stringify(values.toJSON()))
 
             let index = this.formUpdateEl.dataset.trIndex
 

@@ -149,58 +149,6 @@ export class UserModel{
         return json
     }
 
-    static userStringify(data){
-
-        if(data instanceof Array){
-            /*
-            let newArr = []
-            data.forEach(user => {
-                let gettersAndSetters = UserModel.listGettersAndSetters(user)
-
-                let obj = {}
-
-                gettersAndSetters.forEach(getter => {
-                    obj[getter] = user[getter]
-                })
-
-                newArr.push(obj)
-            })*/
-            
-            data.forEach(user =>{
-                let obj = {
-                    
-                    id: user.id,
-                    name: user.name,
-                    gender: user.gender,
-                    birth: user.birth,
-                    country: user.country,
-                    email: user.email,
-                    password: user.password,
-                    photo: user.photo,
-                    admin: user.admin,
-                    registerAt: user.registerAt
-                
-                }
-
-                newArr.push(obj)
-            })
-
-            return JSON.stringify(newArr)
-        }
-
-        return JSON.stringify({
-            id: data.id,
-            name: data.name,
-            gender: data.gender,
-            birth: data.birth,
-            country: data.country,
-            email: data.email,
-            password: data.password,
-            photo: data.photo,
-            admin: data.admin,
-            registerAt: data.registerAt
-        })
-    }
 
     static getUsersDb(){
         return CreateFetch.request('GET','/users')
